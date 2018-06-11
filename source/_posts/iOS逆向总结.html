@@ -1,0 +1,679 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+<title>iOS逆向工程总结</title><link href='https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700,700italic&subset=latin,cyrillic-ext,cyrillic,latin-ext' rel='stylesheet' type='text/css' /><style type='text/css'>html {overflow-x: initial !important;}#write, body { height: auto; }
+#write, #write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write ol, #write p, #write ul { position: relative; }
+#write, #write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p, #write pre { width: inherit; }
+#write, pre { white-space: pre-wrap; }
+.CodeMirror, .md-fences, table { text-align: left; }
+.md-reset, a:active, a:hover { outline: 0px; }
+.md-reset, .md-toc-item a { text-decoration: none; }
+.MathJax_SVG, .md-reset { float: none; direction: ltr; }
+:root { --bg-color: #ffffff; --text-color: #333333; }
+html { font-size: 14px; background-color: var(--bg-color); color: var(--text-color); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+body { margin: 0px; padding: 0px; bottom: 0px; top: 0px; left: 0px; right: 0px; font-size: 1rem; line-height: 1.42857143; overflow-x: hidden; background-image: inherit; background-size: inherit; background-attachment: inherit; background-origin: inherit; background-clip: inherit; background-color: inherit; background-position: inherit inherit; background-repeat: inherit inherit; }
+a.url { word-break: break-all; }
+.in-text-selection, ::selection { background-color: rgb(181, 214, 252); text-shadow: none; background-position: initial initial; background-repeat: initial initial; }
+#write { margin: 0px auto; word-break: normal; word-wrap: break-word; padding-bottom: 70px; overflow-x: visible; }
+.first-line-indent #write p .md-line { text-indent: 0px; }
+.first-line-indent #write li, .first-line-indent #write p, .first-line-indent #write p .md-line:first-child { text-indent: 2em; }
+.for-image #write { padding-left: 8px; padding-right: 8px; }
+body.typora-export { padding-left: 30px; padding-right: 30px; }
+@media screen and (max-width: 500px) { 
+  body.typora-export { padding-left: 0px; padding-right: 0px; }
+  .CodeMirror-sizer { margin-left: 0px !important; }
+  .CodeMirror-gutters { display: none !important; }
+}
+#write > blockquote:first-child, #write > div:first-child, #write > ol:first-child, #write > p:first-child, #write > pre:first-child, #write > table:first-child, #write > ul:first-child { margin-top: 30px; }
+#write li > table:first-child { margin-top: -20px; }
+img { max-width: 100%; vertical-align: middle; }
+button, input, select, textarea { color: inherit; font-family: inherit; font-size: inherit; font-style: inherit; font-variant-caps: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; }
+input[type="checkbox"], input[type="radio"] { line-height: normal; padding: 0px; }
+*, ::after, ::before { box-sizing: border-box; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.6rem; }
+h4 { font-size: 1.4rem; }
+h5 { font-size: 1.2rem; }
+h6 { font-size: 1rem; }
+p { -webkit-margin-before: 1rem; -webkit-margin-after: 1rem; -webkit-margin-start: 0px; -webkit-margin-end: 0px; }
+.mathjax-block { margin-top: 0px; margin-bottom: 0px; -webkit-margin-before: 0px; -webkit-margin-after: 0px; }
+.hidden { display: none; }
+.md-blockmeta { color: rgb(204, 204, 204); font-weight: 700; font-style: italic; }
+a { cursor: pointer; }
+sup.md-footnote { padding: 2px 4px; background-color: rgba(238, 238, 238, 0.701961); color: rgb(85, 85, 85); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; }
+#write input[type="checkbox"] { cursor: pointer; width: inherit; height: inherit; }
+#write > figure:first-child { margin-top: 16px; }
+figure { overflow-x: auto; margin: -8px 0px 0px -8px; max-width: calc(100% + 16px); padding: 8px; }
+tr { break-inside: avoid; break-after: auto; }
+thead { display: table-header-group; }
+table { border-collapse: collapse; border-spacing: 0px; width: 100%; overflow: auto; break-inside: auto; }
+.CodeMirror-line, .md-fences { break-inside: avoid; }
+table.md-table td { min-width: 80px; }
+.CodeMirror-gutters { border-right-width: 0px; background-color: inherit; margin-right: 4px; }
+.CodeMirror-placeholder { opacity: 0.3; }
+.CodeMirror pre { padding: 0px 4px; }
+.CodeMirror-lines { padding: 0px; }
+div.hr:focus { cursor: none; }
+.md-fences { font-size: 0.9rem; display: block; overflow: visible; white-space: pre; background-image: inherit; background-size: inherit; background-attachment: inherit; background-origin: inherit; background-clip: inherit; background-color: inherit; position: relative !important; background-position: inherit inherit; background-repeat: inherit inherit; }
+.md-diagram-panel { width: 100%; margin-top: 10px; text-align: center; padding-top: 0px; padding-bottom: 8px; overflow-x: auto; }
+.md-fences .CodeMirror.CodeMirror-wrap { top: -1.6em; margin-bottom: -1.6em; }
+.md-fences.mock-cm { white-space: pre-wrap; }
+.show-fences-line-number .md-fences { padding-left: 0px; }
+.show-fences-line-number .md-fences.mock-cm { padding-left: 40px; }
+.footnotes { opacity: 0.8; font-size: 0.9rem; margin-top: 1em; margin-bottom: 1em; }
+.footnotes + .footnotes { margin-top: 0px; }
+.md-reset { margin: 0px; padding: 0px; border: 0px; vertical-align: top; text-shadow: none; position: static; width: auto; height: auto; white-space: nowrap; cursor: inherit; line-height: normal; font-weight: 400; text-align: left; box-sizing: content-box; background-position: 0px 0px; background-repeat: initial initial; }
+.md-toc-inner, a img, img a { cursor: pointer; }
+li div { padding-top: 0px; }
+blockquote { margin: 1rem 0px; }
+li .mathjax-block, li p { margin: 0.5rem 0px; }
+li { margin: 0px; position: relative; }
+blockquote > :last-child { margin-bottom: 0px; }
+blockquote > :first-child { margin-top: 0px; }
+.footnotes-area { color: rgb(136, 136, 136); margin-top: 0.714rem; padding-bottom: 0.143rem; white-space: normal; }
+@media print { 
+  body, html { border: 1px solid transparent; height: 99%; break-after: avoid-page; break-before: avoid-page; }
+  #write { margin-top: 0px; border-color: transparent !important; }
+  .typora-export * { -webkit-print-color-adjust: exact; }
+  h1, h2, h3, h4, h5, h6 { break-after: avoid-page; orphans: 2; }
+  p { orphans: 4; }
+  html.blink-to-pdf { font-size: 13px; }
+  .typora-export #write { padding-left: 1cm; padding-right: 1cm; padding-bottom: 0px; break-after: avoid-page; }
+  .typora-export #write::after { height: 0px; }
+  @page { margin: 20mm 0px; }
+}
+.footnote-line { white-space: pre-wrap; margin-top: 0.714em; font-size: 0.7em; }
+pre.md-meta-block { font-size: 0.8rem; min-height: 0.8rem; white-space: pre-wrap; background-color: rgb(204, 204, 204); display: block; overflow-x: hidden; background-position: initial initial; background-repeat: initial initial; }
+p > img:only-child { display: block; margin: auto; }
+.md-line > .md-image:only-child, p > .md-image:only-child { display: inline-block; width: 100%; text-align: center; }
+.mathjax-block:not(:empty)::after, .md-toc-content::after, .md-toc::after { display: none; }
+#write .MathJax_Display { margin: 0.8em 0px 0px; }
+.mathjax-block { white-space: pre; overflow: hidden; width: 100%; }
+p + .mathjax-block { margin-top: -1.143rem; }
+[contenteditable="true"]:active, [contenteditable="true"]:focus { outline: 0px; box-shadow: none; }
+.md-task-list-item { position: relative; list-style-type: none; }
+.task-list-item.md-task-list-item { padding-left: 0px; }
+.md-task-list-item > input { position: absolute; top: 0px; left: 0px; margin-left: -1.2em; margin-top: calc(1em - 10px); }
+.math { font-size: 1rem; }
+.md-toc { min-height: 3.58rem; position: relative; font-size: 0.9rem; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; }
+.MathJax_SVG, .mathjax-block .MathJax_SVG_Display { text-indent: 0px; max-width: none; max-height: none; min-height: 0px; }
+.md-toc-content { position: relative; margin-left: 0px; }
+.md-toc-item { display: block; color: rgb(65, 131, 196); }
+.md-toc-inner:hover { }
+.md-toc-inner { display: inline-block; }
+.md-toc-h1 .md-toc-inner { margin-left: 0px; font-weight: 700; }
+.md-toc-h2 .md-toc-inner { margin-left: 2em; }
+.md-toc-h3 .md-toc-inner { margin-left: 4em; }
+.md-toc-h4 .md-toc-inner { margin-left: 6em; }
+.md-toc-h5 .md-toc-inner { margin-left: 8em; }
+.md-toc-h6 .md-toc-inner { margin-left: 10em; }
+@media screen and (max-width: 48em) { 
+  .md-toc-h3 .md-toc-inner { margin-left: 3.5em; }
+  .md-toc-h4 .md-toc-inner { margin-left: 5em; }
+  .md-toc-h5 .md-toc-inner { margin-left: 6.5em; }
+  .md-toc-h6 .md-toc-inner { margin-left: 8em; }
+}
+a.md-toc-inner { font-size: inherit; font-style: inherit; font-weight: inherit; line-height: inherit; }
+.footnote-line a:not(.reversefootnote) { color: inherit; }
+.md-attr { display: none; }
+.md-fn-count::after { content: "."; }
+code, pre, tt { font-family: var(--monospace); }
+.md-comment { color: rgb(162, 127, 3); opacity: 0.8; font-family: var(--monospace); }
+code { text-align: left; }
+a.md-print-anchor { border: none !important; display: inline-block !important; position: absolute !important; width: 1px !important; right: 0px !important; outline: 0px !important; text-shadow: initial !important; background-position: 0px 0px !important; background-repeat: initial initial !important; }
+.md-inline-math .MathJax_SVG .noError { display: none !important; }
+.mathjax-block .MathJax_SVG_Display { text-align: center; margin: 1em 0px; position: relative; min-width: 100%; width: auto; display: block !important; }
+.MathJax_SVG_Display, .md-inline-math .MathJax_SVG_Display { width: auto; margin: inherit; display: inline-block !important; }
+.MathJax_SVG .MJX-monospace { font-family: monospace; }
+.MathJax_SVG .MJX-sans-serif { font-family: sans-serif; }
+.MathJax_SVG { display: inline; font-style: normal; font-weight: 400; line-height: normal; zoom: 90%; text-align: left; text-transform: none; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; min-width: 0px; border: 0px; padding: 0px; margin: 0px; }
+.MathJax_SVG * { transition: none; }
+.os-windows.monocolor-emoji .md-emoji { font-family: "Segoe UI Symbol", sans-serif; }
+.md-diagram-panel > svg, [lang="flow"] svg, [lang="mermaid"] svg { max-width: 100%; }
+[lang="mermaid"] .node text { font-size: 1rem; }
+table tr th { border-bottom-width: 0px; }
+
+
+/* meyer reset -- http://meyerweb.com/eric/tools/css/reset/ , v2.0 | 20110126 | License: none (public domain) */
+
+@include-when-export url(https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700,700italic&subset=latin,cyrillic-ext,cyrillic,latin-ext);
+
+/* =========== */
+
+@font-face {
+    font-family: 'PT Serif';
+    font-style: normal;
+    font-weight: normal;
+    src: local('PT Serif'), local('PTSerif-Regular'), url(file:///Users/new4545/Library/Application%20Support/abnerworks.Typora/themes/newsprint/PT_Serif-Web-Regular.ttf);
+}
+@font-face {
+    font-family: 'PT Serif';
+    font-style: italic;
+    font-weight: normal;
+    src: local('PT Serif'), local('PTSerif-Italic'), url('file:///Users/new4545/Library/Application%20Support/abnerworks.Typora/themes/newsprint/PT_Serif-Web-Italic.ttf')
+}
+
+@font-face {
+    font-family: 'PT Serif';
+    font-style: normal;
+    font-weight: bold;
+    src: local('PT Serif'), local('PTSerif-Bold'), url('file:///Users/new4545/Library/Application%20Support/abnerworks.Typora/themes/newsprint/PT_Serif-Web-Bold.ttf')
+}
+
+@font-face {
+    font-family: 'PT Serif';
+    font-style: italic;
+    font-weight: bold;
+    src: local('PT Serif'), local('PTSerif-BoldItalic'), url('file:///Users/new4545/Library/Application%20Support/abnerworks.Typora/themes/newsprint/PT_Serif-Web-BoldItalic.ttf')
+}
+
+:root {
+	--active-file-bg-color: #dadada;
+	--active-file-bg-color: rgba(32, 43, 51, 0.63);
+	--active-file-text-color: white;
+	--bg-color: #f3f2ee;
+	--text-color: #1f0909;
+}
+
+html {
+	font-size: 16px;
+}
+
+html, body {
+	background-color: #f3f2ee;
+	font-family: "PT Serif", 'Times New Roman', Times;
+	color: #1f0909;
+	line-height: 1.5em;
+}
+
+/*#write {
+	overflow-x: auto;
+    max-width: initial;
+	padding-left: calc(50% - 17em);
+    padding-right: calc(50% - 17em);
+}
+
+@media (max-width: 36em) {
+ 	#write {
+ 		padding-left: 1em;
+    	padding-right: 1em;
+ 	}
+}*/
+
+#write {
+	max-width: 40em;
+}
+
+ol,
+ul {
+	list-style: none;
+}
+blockquote,
+q {
+	quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/* styles */
+
+/* ====== */
+
+/* headings */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-weight: bold;
+}
+h1 {
+	font-size: 1.875em;
+	/*30 / 16*/
+	line-height: 1.6em;
+	/* 48 / 30*/
+	margin-top: 2em;
+}
+h2,
+h3 {
+	font-size: 1.3125em;
+	/*21 / 16*/
+	line-height: 1.15;
+	/*24 / 21*/
+	margin-top: 2.285714em;
+	/*48 / 21*/
+	margin-bottom: 1.15em;
+	/*24 / 21*/
+}
+h3 {
+	font-weight: normal;
+}
+h4 {
+	font-size: 1.125em;
+	/*18 / 16*/
+	margin-top: 2.67em;
+	/*48 / 18*/
+}
+h5,
+h6 {
+	font-size: 1em;
+	/*16*/
+}
+h1 {
+	border-bottom: 1px solid;
+	margin-bottom: 1.875em;
+	padding-bottom: 0.8125em;
+}
+/* links */
+
+a {
+	text-decoration: none;
+	color: #065588;
+}
+a:hover,
+a:active {
+	text-decoration: underline;
+}
+/* block spacing */
+
+p,
+blockquote,
+.md-fences {
+	margin-bottom: 1.5em;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin-bottom: 1.5em;
+}
+/* blockquote */
+
+blockquote {
+	font-style: italic;
+	border-left: 5px solid;
+	margin-left: 2em;
+	padding-left: 1em;
+}
+/* lists */
+
+ul,
+ol {
+	margin: 0 0 1.5em 1.5em;
+}
+ol li {
+	list-style-type: decimal;
+	list-style-position: outside;
+}
+ul li {
+	list-style-type: disc;
+	list-style-position: outside;
+}
+/* tables */
+.md-meta,.md-before, .md-after {
+	color:#999;
+}
+
+table {
+	margin-bottom: 1.5em;
+	/*24 / 16*/
+	font-size: 1em;
+	/* width: 100%; */
+}
+thead th,
+tfoot th {
+	padding: .25em .25em .25em .4em;
+	text-transform: uppercase;
+}
+th {
+	text-align: left;
+}
+td {
+	vertical-align: top;
+	padding: .25em .25em .25em .4em;
+}
+
+code,
+.md-fences {
+	background-color: #dadada;
+	padding-left: 1ch;
+	padding-right: 1ch;
+}
+.md-fences {
+	margin-left: 2em;
+	margin-bottom: 3em;
+}
+
+.md-fences .CodeMirror.CodeMirror-wrap {
+	top: -0.8em;
+}
+
+pre,
+code,
+tt {
+	font-size: .875em;
+	line-height: 1.714285em;
+}
+/* some fixes */
+
+h1 {
+	line-height: 1.3em;
+	font-weight: normal;
+	margin-bottom: 0.5em;
+}
+
+p + ul,
+p + ol{
+	margin-top: -1em;
+}
+
+h3 + ul,
+h4 + ul,
+h5 + ul,
+h6 + ul,
+h3 + ol,
+h4 + ol,
+h5 + ol,
+h6 + ol {
+	margin-top: .5em;
+}
+
+li > ul,
+li > ol {
+	margin-top: inherit;
+}
+
+h2,
+h3 {
+	margin-bottom: .75em;
+}
+hr {
+	border-top: none;
+	border-right: none;
+	border-bottom: 1px solid;
+	border-left: none;
+}
+h1 {
+	border-color: #c5c5c5;
+}
+blockquote {
+	border-color: #bababa;
+	color: #656565;
+}
+thead.md-table-edit {
+	background-color: transparent;
+}
+thead {
+	background-color: #dadada;
+}
+tr:nth-child(even) {
+	background: #e8e7e7;
+}
+hr {
+	border-color: #c5c5c5;
+}
+.task-list{
+	padding-left: 1rem;
+}
+
+.md-task-list-item {
+	padding-left: 1.5rem;
+	list-style-type: none;
+}
+
+.md-task-list-item > input:before {
+	content: '\221A';
+	display: inline-block;
+	width: 1.25rem;
+  	height: 1.6rem;
+	vertical-align: middle;
+	text-align: center;
+	color: #ddd;
+	background-color: #F3F2EE;
+}
+
+.md-task-list-item > input:checked:before,
+.md-task-list-item > input[checked]:before{
+	color: inherit;
+}
+
+#write pre.md-meta-block {
+	min-height: 1.875rem;
+	color: #555;
+	border: 0px;
+	background: transparent;
+	margin-top: -4px;
+	margin-left: 1em;
+	margin-top: 1em;
+}
+
+.md-image>.md-meta {
+	color: #9B5146;
+}
+
+.md-image>.md-meta{
+	font-family: Menlo, 'Ubuntu Mono', Consolas, 'Courier New', 'Microsoft Yahei', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif;
+}
+
+
+#write>h3.md-focus:before{
+	left: -1.5rem;
+	color:#999;
+	border-color:#999;
+}
+#write>h4.md-focus:before{
+	left: -1.5rem;
+	top: .25rem;
+	color:#999;
+	border-color:#999;
+}
+#write>h5.md-focus:before{
+	left: -1.5rem;
+	top: .0.3125rem;
+	color:#999;
+	border-color:#999;
+}
+#write>h6.md-focus:before{
+	left: -1.5rem;
+	top: 0.3125rem;
+	color:#999;
+	border-color:#999;
+}
+
+.md-toc:focus .md-toc-content{
+	margin-top: 19px;
+}
+
+.md-toc-content:empty:before{
+	color: #065588;
+}
+.md-toc-item {
+	color: #065588;
+}
+#write div.md-toc-tooltip {
+	background-color: #f3f2ee;
+}
+
+#typora-sidebar {
+	background-color: #f3f2ee;
+	-webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.375);
+  	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.375);
+}
+
+.pin-outline #typora-sidebar {
+	background: inherit;
+	box-shadow: none;
+	border-right: 1px dashed;
+}
+
+.pin-outline #typora-sidebar:hover .outline-title-wrapper {
+	border-left:1px dashed;
+}
+
+.outline-item:hover {
+  background-color: #dadada;
+  border-left: 28px solid #dadada;
+  border-right: 18px solid #dadada;
+}
+
+.typora-node .outline-item:hover {
+  	border-right: 28px solid #dadada;
+}
+
+.outline-expander:before {
+  content: "\f0da";
+  font-family: FontAwesome;
+  font-size:14px;
+  top: 1px;
+}
+
+.outline-expander:hover:before,
+.outline-item-open>.outline-item>.outline-expander:before {
+  content: "\f0d7";
+}
+
+.modal-content {
+	background-color: #f3f2ee;
+}
+
+.auto-suggest-container ul li {
+	list-style-type: none;
+}
+
+/** UI for electron */
+
+.megamenu-menu,
+#top-titlebar, #top-titlebar *,
+.megamenu-content {
+	background: #f3f2ee;
+	color: #1f0909;
+}
+
+.megamenu-menu-header {
+	border-bottom: 1px dashed #202B33;
+}
+
+.megamenu-menu {
+	box-shadow: none;
+	border-right: 1px dashed;
+}
+
+header, .context-menu, .megamenu-content, footer {
+	font-family: "PT Serif", 'Times New Roman', Times;
+    color: #1f0909;
+}
+
+#megamenu-back-btn {
+	color: #1f0909;
+	border-color: #1f0909;
+}
+
+.megamenu-menu-header #megamenu-menu-header-title:before {
+	color: #1f0909;
+}
+
+.megamenu-menu-list li a:hover, .megamenu-menu-list li a.active {
+	color: inherit;
+	background-color: #e8e7df;
+}
+
+.long-btn:hover {
+	background-color: #e8e7df;
+}
+
+#recent-file-panel tbody tr:nth-child(2n-1) {
+    background-color: transparent !important;
+}
+
+.megamenu-menu-panel tbody tr:hover td:nth-child(2) {
+    color: inherit;
+}
+
+.megamenu-menu-panel .btn {
+	background-color: #D2D1D1;
+}
+
+.btn-default {
+	background-color: transparent;
+}
+
+.typora-sourceview-on #toggle-sourceview-btn,
+.show-word-count #footer-word-count {
+	background: #c7c5c5;
+}
+
+#typora-quick-open {
+    background-color: inherit;
+}
+
+.md-diagram-panel {
+	margin-left: -1ch;
+	margin-top: 24px;
+}
+
+.file-list-item-file-name {
+	font-weight: initial;
+}
+
+.file-list-item-summary {
+	opacity: 1;
+}
+
+.file-list-item {
+	color: #777;
+}
+
+.file-list-item.active {
+	background-color: inherit;
+	color: black;
+}
+
+.ty-side-sort-btn.active {
+	background-color: inherit;
+}
+
+.file-list-item.active .file-list-item-file-name  {
+	font-weight: bold;
+}
+
+.file-list-item{
+    opacity:1 !important;
+}
+
+.file-library-node.active>.file-node-background{
+	background-color: rgba(32, 43, 51, 0.63);
+	background-color: var(--active-file-bg-color);
+}
+
+.file-tree-node.active>.file-node-content{
+	color: white;
+	color: var(--active-file-text-color);
+}
+
+.md-task-list-item>input {
+	margin-left: -1.6em;
+	margin-top: calc(1rem - 12px);
+}
+
+
+ .typora-export p, .typora-export .footnote-line {white-space: normal;} 
+</style>
+</head>
+<body class='typora-export' >
+<div  id='write'  class = 'is-mac show-fences-line-number'><hr /><div class='md-toc' mdtype='toc'><p class="md-toc-content"><span class="md-toc-item md-toc-h3" data-ref="n4"><a class="md-toc-inner" style="" href="#header-n4">iOS 逆向概念</a></span><span class="md-toc-item md-toc-h4" data-ref="n5"><a class="md-toc-inner" style="" href="#header-n5">1.逆向的作用</a></span><span class="md-toc-item md-toc-h4" data-ref="n20"><a class="md-toc-inner" style="" href="#header-n20">2.逆向工具</a></span><span class="md-toc-item md-toc-h4" data-ref="n42"><a class="md-toc-inner" style="" href="#header-n42">3.iOS 目录结构</a></span><span class="md-toc-item md-toc-h4" data-ref="n101"><a class="md-toc-inner" style="" href="#header-n101">4.iOS二进制文件类型</a></span><span class="md-toc-item md-toc-h3" data-ref="n172"><a class="md-toc-inner" style="" href="#header-n172">OSX工具</a></span><span class="md-toc-item md-toc-h4" data-ref="n175"><a class="md-toc-inner" style="" href="#header-n175">1.class-dump</a></span><span class="md-toc-item md-toc-h4" data-ref="n194"><a class="md-toc-inner" style="" href="#header-n194">2.Theos</a></span><span class="md-toc-item md-toc-h4" data-ref="n228"><a class="md-toc-inner" style="" href="#header-n228">3.Reveal</a></span><span class="md-toc-item md-toc-h4" data-ref="n250"><a class="md-toc-inner" style="" href="#header-n250">4.IDA</a></span><span class="md-toc-item md-toc-h3" data-ref="n480"><a class="md-toc-inner" style="" href="#header-n480">iOS工具集</a></span><span class="md-toc-item md-toc-h4" data-ref="n490"><a class="md-toc-inner" style="" href="#header-n490">1.Cydia Substrate</a></span><span class="md-toc-item md-toc-h4" data-ref="n533"><a class="md-toc-inner" style="" href="#header-n533">2.cycript</a></span><span class="md-toc-item md-toc-h4" data-ref="n592"><a class="md-toc-inner" style="" href="#header-n592">3.lldb</a></span><span class="md-toc-item md-toc-h4" data-ref="n764"><a class="md-toc-inner" style="" href="#header-n764">4.dumpdecrypted </a></span><span class="md-toc-item md-toc-h4" data-ref="n795"><a class="md-toc-inner" style="" href="#header-n795">5.OpenSSH</a></span><span class="md-toc-item md-toc-h4" data-ref="n857"><a class="md-toc-inner" style="" href="#header-n857">6.usbmuxd</a></span><span class="md-toc-item md-toc-h4" data-ref="n879"><a class="md-toc-inner" style="" href="#header-n879">7.iflie、Filza</a></span><span class="md-toc-item md-toc-h4" data-ref="n901"><a class="md-toc-inner" style="" href="#header-n901">8.MTerminal </a></span><span class="md-toc-item md-toc-h4" data-ref="n946"><a class="md-toc-inner" style="" href="#header-n946">9.syslogd</a></span><span class="md-toc-item md-toc-h3" data-ref="n818"><a class="md-toc-inner" style="" href="#header-n818">优秀资源文章</a></span></p></div><h3><a name='header-n4' class='md-header-anchor '></a>iOS 逆向概念</h3><h4><a name='header-n5' class='md-header-anchor '></a>1.逆向的作用</h4><ul><li><p>通过分析目标程序，拿到关键信息 ,可以归类于安全相关的逆向工程</p><ol start='' ><li>评定安全等级</li><li>修改软件使用限制,逻辑,功能等</li><li>开发相关逆向工程</li></ol></li></ul><h4><a name='header-n20' class='md-header-anchor '></a>2.逆向工具</h4><figure><table><thead><tr><th style='text-align:center;' >检测工具</th><th style='text-align:center;' >反汇编工具</th><th style='text-align:center;' >调试工具</th><th style='text-align:center;' >开发工具</th></tr></thead><tbody><tr><td style='text-align:center;' >Reveal(监测UI)</td><td style='text-align:center;' >IDA</td><td style='text-align:center;' >lldb</td><td style='text-align:center;' >iOSOpenDev</td></tr><tr><td style='text-align:center;' >snoop-it(网络活动)</td><td style='text-align:center;' >Hopper</td><td style='text-align:center;' >\</td><td style='text-align:center;' >Theos</td></tr><tr><td style='text-align:center;' >introspy(分析应用程序)</td><td style='text-align:center;' >\</td><td style='text-align:center;' >\</td><td style='text-align:center;' >\</td></tr></tbody></table></figure><h4><a name='header-n42' class='md-header-anchor '></a>3.iOS 目录结构</h4><ul><li>·/：根目录，以斜杠表示，其他所有文件和目录在根目录下展开 </li><li>·/bin：“binary”的简写，存放提供用户级基础功能的二进制文件，如ls、ps等 </li><li>·/boot：存放能使系统成功启动的所有文件。iOS中此目录为空”</li><li>·/dev：“device”的简写，存放BSD设备文件” “每个文件代表系统的一个块设备或字符设备</li><li>·/sbin：“system binaries”的简写，存放提供系统级基础功能的二进制文件，如netstat、reboot等 </li><li>·/etc：“Et Cetera”的简写，存放系统脚本及配置文件，如passwd、hosts等。在iOS中，/etc是一个符号链接，实际指向/private/etc。 </li><li>·/lib：存放系统库文件、内核模块及设备驱动等。iOS中此目录为空 </li><li>·/mnt：“mount”的简写，存放临时的文件系统挂载点。iOS中此目录为空。 </li><li>·/private：存放两个目录，分别是/private/etc和/private/var </li><li>·/tmp：临时目录。在iOS中，/tmp是一个符号链接，实际指向/private/var/tmp。 </li><li>·/usr：包含了大多数用户工具和程序。/usr/bin包含那些/bin和/sbin中未出现的基础功能，如nm、killall等；/usr/include包含所有的标准C头文件；/usr/lib存放库文件。 </li><li>·/var：“variable”的简写，存放一些经常更改的文件，比如日志、用户数据、临时文件等”“其中/var/mobile和/var/root分别存放了mobile用户和root用户的文件，是重点关注的目录。 </li><li>/Applications：存放所有的系统App和来自于Cydia的App，不包括StoreApp </li><li>·/Developer：如果一台设备连接Xcode后被指定为调试用机（如图2-4所示），Xcode就会在iOS中生成这个目录 </li><li>·/Library：存放一些提供系统支持的数据 </li><li>·/System/Library：iOS文件系统中最重要的目录之一，存放大量系统组件 </li><li>·/System/Library/Frameworks和/System/Library/PrivateFrameworks：存放iOS中的各种framework，其中出现在SDK文档里的只是冰山一角，还有数不清的未公开功能等待我们去挖掘 </li><li>·/System/Library/CoreServices里的SpringBoard.app：iOS桌面管理器（类似于Windows里的explorer），是用户与系统交流的最重要中介 </li><li>/User：用户目录，实际指向/var/mobile  &quot;·/var/mobile/Media/DCIM下存放照片 &quot; “·/var/mobile/Media/Recordings下存放录音文件；” “·/var/mobile/Library/SMS下存放短信数据库；” “·/var/mobile/Library/Mail下存放邮件数据。”  “非常重要的子目录是/var/mobile/Containers，存放StoreApp。值得注意的是，App的可执行文件在bundle与App中的数据目录被分别存放在/var/mobile/Containers/Bundle和/var/mobile/Containers/Data这两个不同目录下” </li></ul><h4><a name='header-n101' class='md-header-anchor '></a>4.iOS二进制文件类型</h4><ul><li><p>Application</p><ul><li><p>1.bundle</p><ul><li>App和framework</li><li>PreferenceBundle(依附于setting)</li></ul></li><li><p>App目录结构</p><ul><li><p>Info.plist(记录App的基本信息 )</p><p>关注Bundle Identifier ,可执行文件名等有用信息</p></li><li><p>可执行文件</p><p>BundleExecutable</p></li><li><p>lproj目录(本地化字符串)</p></li></ul></li><li><p>系统App VS.StoreApp</p><ul><li><p>目录结构</p><p>系统App(Cydia APP):/Applications   权限:root</p><p>StoreApp:/var/mobile/Containers/    权限:mobile</p></li><li><p>安装包格式与权限</p><ul><li>系统(cydia)App: .deb</li><li>storeApp:  .ipa</li></ul></li><li><p>沙盒</p></li></ul></li></ul></li><li><p>Dynamic Library</p><p>在iOS中，lib分为static和dynamic两种:</p><p>​	1.其中static lib在编译阶段成为App可执行文件的一部分，会增加可执行文件的大小</p><p>​	2.dylib不会改变可执行文件的大小，只有当App需要用到这个dylib时，iOS才会把它加载进内存，成为App进程的一部分</p><p>lib 本身并不是可执行文件，不能独立运行，只能为别的进程服务，而且它们寄生在别的进程里，成为了这个进程的一部分。</p></li><li><p>Deamon(后台) </p></li></ul><h3><a name='header-n172' class='md-header-anchor '></a>OSX工具</h3><h4><a name='header-n175' class='md-header-anchor '></a>1.class-dump</h4><ul><li>作用:用来dump目标文件的class信息的工具</li><li>原理:利用Objective-C语言的runtime的特性，将存储在mach-O文件中的@interface和@protocol信息提取出来，并生成对应的.h文件</li><li>安装使用:<a href='https://www.jianshu.com/p/1e3fe0a8c048' target='_blank' class='url'>https://www.jianshu.com/p/1e3fe0a8c048</a></li><li>主要命令行:class-dump -H [.app文件的路径] -o [输出文件夹路径]</li><li>局限:没有加密的App。APPStore上的App就需要配合Dumpdecrypted破壳了</li></ul><h4><a name='header-n194' class='md-header-anchor '></a>2.Theos</h4><ul><li><p>作用:越狱工具开发包(开发工具)</p></li><li><p>安装使用:<a href='https://www.cnblogs.com/ludashi/p/5714095.html' target='_blank' class='url'>https://www.cnblogs.com/ludashi/p/5714095.html</a></p></li><li><p>主要命令行:</p><ol start='' ><li>export THEOS=theos文件所在路径(一般为/opt/theos)</li><li>$THEOS/bin/nic.pl        新建工程</li><li>make   编译</li><li>make package   打包</li><li>make install 安装</li></ol></li><li><p>语言:<a href='http://iphonedevwiki.net/index.php/Logos'>Logos</a></p><p>&nbsp;</p></li></ul><h4><a name='header-n228' class='md-header-anchor '></a>3.Reveal</h4><ul><li>作用:监测UI布局</li><li>安装教程: <a href='https://blog.csdn.net/hello_hwc/article/details/69365095' target='_blank' class='url'>https://blog.csdn.net/hello_hwc/article/details/69365095</a></li><li>主要命令行:/</li><li>注意:OSX与iOS要在同一网段下</li></ul><h4><a name='header-n250' class='md-header-anchor '></a>4.IDA</h4><ul><li>作用:反汇编工具,看源代码的</li><li>下载安装:<a href='https://www.hex-rays.com/products/ida/support/download_demo.shtml' target='_blank' class='url'>https://www.hex-rays.com/products/ida/support/download_demo.shtml</a></li><li>教程:<a href='http://www.freebuf.com/column/157939.html' target='_blank' class='url'>http://www.freebuf.com/column/157939.html</a></li><li>主要操作:空格键 、F5等</li><li>难点:汇编</li></ul><h3><a name='header-n480' class='md-header-anchor '></a>iOS工具集</h3><h4><a name='header-n490' class='md-header-anchor '></a>1.Cydia Substrate</h4><ul><li>作用:绝大部分tweak正常工作的基础，它由MobileHooker、MobileLoade和Safe mode 组成。 cydia商店可直接下载</li></ul><h4><a name='header-n533' class='md-header-anchor '></a>2.cycript</h4><ul><li>作用:脚本语言,测试(调试)运行的App</li><li>安装:cydia直接下载安装</li><li>教程:<a href='http://www.cycript.org/manual/' target='_blank' class='url'>http://www.cycript.org/manual/</a>、<a href='https://www.jianshu.com/p/7c41b03c9eb3' target='_blank' class='url'>https://www.jianshu.com/p/7c41b03c9eb3</a></li><li>语言:Objective-C与javascript</li></ul><h4><a name='header-n592' class='md-header-anchor '></a>3.lldb</h4><ul><li><p>作用:Xcode自带的调试工具</p></li><li><p>安装教程:<a href='http://www.qingpingshan.com/rjbc/ios/140197.html' target='_blank' class='url'>http://www.qingpingshan.com/rjbc/ios/140197.html</a></p></li><li><p>使用教程:<a href='http://www.dllhook.com/post/51.html' target='_blank' class='url'>http://www.dllhook.com/post/51.html</a></p></li><li><p>主要命令行:</p><ul><li>直接启动进程：debugserver -x backboard *:1234 /path/to/app/executable</li><li>附加进程：./debugserver *:1234 -a &quot;YourAPPName&quot;</li><li>po(打印对象信息) p(打印值) c(继续执行) s、si(单步执行,子函数进入) 、n、ni(单步执行,子函数跳过)</li><li>breakpoint 断点设置,详细看书,或者是教程</li><li>image list -o -f 模块基地址</li></ul></li></ul><p>&nbsp;</p><h4><a name='header-n764' class='md-header-anchor '></a>4.dumpdecrypted </h4><ul><li>作用:AppStrore榔头,在AppStore下载的app不能直接dump,要配合dumpdecrypted才可以导出头文件信息</li><li>使用安装:<a href='https://www.jianshu.com/p/039dfd040253' target='_blank' class='url'>https://www.jianshu.com/p/039dfd040253</a></li><li>主要命令行:DYLD_INSERT_LIBRARIES=/path/to/dumpdecrypted.dylib /path/to/executable</li></ul><h4><a name='header-n795' class='md-header-anchor '></a>5.OpenSSH</h4><ul><li>作用:iOS设备安装ssh服务,cydia可直接下载</li><li>命令行:ssh  scp等</li></ul><h4><a name='header-n857' class='md-header-anchor '></a>6.usbmuxd</h4><ul><li>作用:usb的ssh服务</li></ul><h4><a name='header-n879' class='md-header-anchor '></a>7.iflie、Filza</h4><ul><li>作用:iOS文件管理工具</li></ul><h4><a name='header-n901' class='md-header-anchor '></a>8.MTerminal </h4><ul><li>作用:ios 终端 输入</li></ul><h4><a name='header-n946' class='md-header-anchor '></a>9.syslogd</h4><ul><li>作用:系统日记</li></ul><h3><a name='header-n818' class='md-header-anchor '></a>优秀资源文章</h3><ul><li><a href='https://niyaoyao.github.io/2017/05/09/Learning-Reverse-From-Today-D4' target='_blank' class='url'>https://niyaoyao.github.io/2017/05/09/Learning-Reverse-From-Today-D4</a>/</li></ul></div>
+</body>
+</html>
